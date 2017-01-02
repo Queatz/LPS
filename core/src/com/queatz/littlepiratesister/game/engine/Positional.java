@@ -1,6 +1,7 @@
 package com.queatz.littlepiratesister.game.engine;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.things.Thing;
 
 /**
@@ -9,13 +10,13 @@ import com.queatz.littlepiratesister.game.things.Thing;
 
 public class Positional {
     public Thing thing;
-    public Vector2 position;
+    public Vector3 position;
 
     public Positional(Thing thing) {
-        this(thing, new Vector2());
+        this(thing, new Vector3());
     }
 
-    public Positional(Thing thing, Vector2 position) {
+    public Positional(Thing thing, Vector3 position) {
         this.thing = thing;
         this.position = position;
     }

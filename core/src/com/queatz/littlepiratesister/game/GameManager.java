@@ -2,9 +2,11 @@ package com.queatz.littlepiratesister.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.engine.Camera;
 import com.queatz.littlepiratesister.game.engine.Input;
 import com.queatz.littlepiratesister.game.engine.Update;
+import com.queatz.littlepiratesister.game.things.Encampment;
 import com.queatz.littlepiratesister.game.things.Player;
 import com.queatz.littlepiratesister.game.things.Thing;
 import com.queatz.littlepiratesister.game.things.World;
@@ -30,17 +32,26 @@ public class GameManager {
         camera = new Camera();
         lastFrame = new Date();
 
-        player = new Player();
-        world.add(player);
+        setupWorld();
 
         input = new Input(this);
         Gdx.input.setInputProcessor(input);
+    }
+
+    private void setupWorld() {
+        player = new Player();
+        world.add(player);
+        for (int i = 0; i < 50; i++) {
+            Encampment encampment = new Encampment();
+            world.add(encampment, new Vector3(5000f * ((float) Math.random() - .5f), 5000f * ((float) Math.random() - .5f), 0));
+        }
     }
 
     public void update() {
         Update update = new Update();
         Date now = new Date();
         update.delta = ((double) now.getTime() - (double) lastFrame.getTime()) / 1000d;
+        update.world = world;
         lastFrame = new Date();
         input.update(update);
         world.update(update);

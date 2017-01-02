@@ -2,6 +2,7 @@ package com.queatz.littlepiratesister.game.engine;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.GameManager;
 
 /**
@@ -94,7 +95,7 @@ public class Input implements InputProcessor {
             float scl = Math.min(maxSpeed, pos.len() * gameManager.getCamera().getZoom()) * (float) update.delta;
 
             // Move in the desired direction at that speed
-            gameManager.getWorld().move(gameManager.getPlayer(), pos.nor().scl(scl));
+            gameManager.getWorld().move(gameManager.getPlayer(), new Vector3(pos.nor().scl(scl), 0));
         }
     }
 }

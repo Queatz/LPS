@@ -25,6 +25,7 @@ public class ResourceManager {
         }
 
         Texture texture = new Texture(img);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         images.put(img, texture);
         return texture;
     }
