@@ -93,6 +93,18 @@ public class ShaderManager {
         return waterShader;
     }
 
+    public static void dispose() {
+        if (waterShader != null) {
+            waterShader.dispose();
+            waterShader = null;
+        }
+
+        if (shader != null) {
+            shader.dispose();
+            shader = null;
+        }
+    }
+
     public static void shaderBegin(ShaderProgram shader) {
         shader.setUniformf("u_time", (float) (new Date().getTime() / 100000d % 10000d));
     }

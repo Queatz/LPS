@@ -1,5 +1,6 @@
 package com.queatz.littlepiratesister.game.engine;
 
+import com.queatz.littlepiratesister.game.GameManager;
 import com.queatz.littlepiratesister.game.things.World;
 
 /**
@@ -9,4 +10,5 @@ import com.queatz.littlepiratesister.game.things.World;
 public class Update {
     public double delta;
     public World world;
+    public GameManager game;
 }

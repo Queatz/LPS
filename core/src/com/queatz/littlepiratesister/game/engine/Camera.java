@@ -15,7 +15,7 @@ import com.queatz.littlepiratesister.game.things.Thing;
  */
 
 public class Camera {
-    private OrthographicCamera cam = new OrthographicCamera();
+    public OrthographicCamera cam = new OrthographicCamera();
     private SpriteBatch spriteBath = new SpriteBatch();
     private DecalBatch decalBatch = new DecalBatch(new SimpleGroupStrategy(cam));
     private Vector3 position = new Vector3();
@@ -25,7 +25,7 @@ public class Camera {
     private Vector3 ref;
 
     public Camera() {
-        cam.rotate(new Vector3(1, 0, 0), 45);
+        setPersp(true);
         cam.far = 1000;
         cam.near = -1000;
 
@@ -90,5 +90,28 @@ public class Camera {
 
     public Vector3 getRef() {
         return ref;
+    }
+
+    public void setPersp(boolean persp) {
+        cam.up.set(0, 1, 0);
+        cam.direction.set(0, 0, -1);
+
+        if (persp) {
+            cam.rotate(new Vector3(1, 0, 0), 45);
+        }
+
+        cam.update();
+        spriteBath.setProjectionMatrix(cam.combined);
+    }
+
+    public Vector3 screenToWorld(Vector3 screenXY) {
+        float z = (screenXY.y / cam.viewportHeight) - .5f;
+
+        // Account for 45 degree rotation
+        z *= (cam.viewportHeight / 2f) * zoom / 1000f;
+
+        screenXY.z = .5f - (z / 1f);
+
+        return cam.unproject(screenXY);
     }
 }

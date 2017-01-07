@@ -1,9 +1,12 @@
 package com.queatz.littlepiratesister.game.engine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.GameManager;
+
+import java.util.Date;
 
 /**
  * Created by jacob on 1/1/17.
@@ -14,8 +17,10 @@ public class Input implements InputProcessor {
     private GameManager gameManager;
     private Vector2 start = new Vector2();
     private Vector2 dragging;
+    private Date dragStart;
     private float sensitivity = 1;
-    private float maxSpeed = 200;
+    private float maxSpeed = 320;
+    private float sensitivityForTap = 250;
 
     public Input(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -31,6 +36,7 @@ public class Input implements InputProcessor {
         start.x = screenX;
         start.y = screenY;
         dragging = new Vector2(start);
+        dragStart = new Date();
 
         return true;
     }
@@ -39,6 +45,10 @@ public class Input implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button != com.badlogic.gdx.Input.Buttons.LEFT || pointer > 0) {
             return false;
+        }
+
+        if (new Date().getTime() - dragStart.getTime() < sensitivityForTap) {
+            gameManager.tap(new Vector3(screenX, screenY, 0));
         }
 
         dragging = null;
