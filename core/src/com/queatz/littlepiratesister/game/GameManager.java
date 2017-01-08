@@ -1,6 +1,10 @@
 package com.queatz.littlepiratesister.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.engine.Camera;
@@ -19,6 +23,7 @@ import com.queatz.littlepiratesister.game.things.World;
 
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by jacob on 12/30/16.
@@ -36,6 +41,7 @@ public class GameManager {
 
     private Existential playerAI;
     private Existential player2AI;
+    public UIManager uiManager;
 
     public GameManager() {
         world = new World();
@@ -63,7 +69,7 @@ public class GameManager {
         world.add(playerAI);
 
         Sentiment playerSentiment = new Sentiment();
-        playerSentiment.power = 2f;
+        playerSentiment.power = 6f;
         playerSentiment.value = 5f;
         playerSentiment.capacity = 5f;
         playerSentiment.defense = 3f;
@@ -74,14 +80,36 @@ public class GameManager {
             sentiment.capacity = (float) (Math.random() * 120f);
             sentiment.power = (float) (Math.random() * .034f);
             sentiment.defense = (float) (Math.random() * 0.04f);
-            sentiment.value = (float) Math.random() * -50f;
+            sentiment.value = -sentiment.capacity;
 
             Existential encampment = new Existential()
                     .thing(new Encampment())
-                    .position(new Vector3(500f * ((float) Math.random() - .5f), 500f * ((float) Math.random() - .5f), 0))
+                    .position(new Vector3(1000f * ((float) Math.random() - .5f), 1000f * ((float) Math.random() - .5f), 0))
                     .sentiment(sentiment);
             world.add(encampment);
+
+            int n = new Random().nextInt(7);
+            for (int s = 0; s < n; s++) {
+                addShip(encampment);
+            }
         }
+    }
+
+    private void addShip(Existential encampment) {
+        Ship ship = new Ship();
+        Sentiment sentiment = new Sentiment();
+        sentiment.capacity = Math.random() > .75 ? 20 : 10;
+        sentiment.value = -sentiment.capacity;
+        sentiment.power = 1;
+        sentiment.defense = Math.random() > .75 ? 4 : 1;
+
+        Vector3 pos = new Vector3((float) (Math.random() - .5f) * 60, (float) (Math.random() - .5f) * 60, 0).add(encampment.position);
+
+        ship.setTarget(pos);
+        world.add(new Existential()
+                .thing(ship)
+                .sentiment(sentiment)
+                .position(pos));
     }
 
     public void update() {
@@ -115,6 +143,24 @@ public class GameManager {
 
         camera.setPersp(false);
         FontManager.write(camera, "$" + NumberFormat.getInstance().format((int) getPlayerAI().resources.money), position, true);
+
+        String text = "Village of Maqruelle, France";
+
+        GlyphLayout glyphLayout = new GlyphLayout();
+        glyphLayout.setText(FontManager.getFont(), text);
+
+        FontManager.getFont().setColor(Color.WHITE);
+
+        float s = .3333f;
+
+        position = new Vector3(
+                -glyphLayout.width * s / 2,
+                camera.getViewport().y * camera.getZoom() / 2 - 64 * s,
+                0
+        );
+
+        FontManager.write(camera, text, position, true, s);
+
         camera.setPersp(true);
     }
 
@@ -152,8 +198,6 @@ public class GameManager {
     public void tap(Vector3 tap) {
         Vector3 position = camera.screenToWorld(tap);
 
-        world.add(new Existential().thing(new Target()).position(position));
-
         if (getPlayerAI().resources.money < 50) {
             return;
         }
@@ -187,8 +231,21 @@ public class GameManager {
         }
 
         if (closestNegative != null && closestPositive != null) {
-            target(closestPositive, closestNegative);
+            if (closestNegativeDistance < closestPositiveDistance) {
+                target(closestPositive, closestNegative);
+            } else {
+                upgrade(closestPositive);
+            }
+        } else if (closestPositive != null) {
+            upgrade(closestPositive);
         }
+    }
+
+    private void upgrade(Existential closestPositive) {
+        getPlayerAI().resources.money -= 50;
+        closestPositive.sentiment.value += 50;
+        closestPositive.sentiment.capacity += 50;
+        world.add(new Existential().thing(new Target()).position(closestPositive.position));
     }
 
     private void target(Existential from, Existential to) {
@@ -207,5 +264,11 @@ public class GameManager {
                 .thing(ship)
                 .sentiment(sentiment)
                 .position(from.position));
+
+        world.add(new Existential().thing(new Target()).position(to.position));
+    }
+
+    public boolean click(Vector3 position) {
+        return uiManager.tap(new Vector2(position.x, position.y));
     }
 }

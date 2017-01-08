@@ -1,5 +1,6 @@
 package com.queatz.littlepiratesister.game.ui;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.queatz.littlepiratesister.game.UIManager;
 
 /**
@@ -17,5 +18,13 @@ public class Element {
 
     public void render() {
 
+    }
+
+    public boolean tap() {
+        return false;
+    }
+
+    public Rectangle bounds() {
+        return new Rectangle();
     }
 }

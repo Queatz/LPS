@@ -47,6 +47,14 @@ public class Input implements InputProcessor {
             return false;
         }
 
+        if (gameManager.click(new Vector3(screenX, screenY, 0))) {
+            return true;
+        }
+
+        if (dragStart == null) {
+            return false;
+        }
+
         if (new Date().getTime() - dragStart.getTime() < sensitivityForTap) {
             gameManager.tap(new Vector3(screenX, screenY, 0));
         }

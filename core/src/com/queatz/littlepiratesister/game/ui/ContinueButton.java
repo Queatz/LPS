@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by jacob on 1/4/17.
  */
 
-public class Button extends Element {
+public class ContinueButton extends Element {
     @Override
     public void render() {
         BitmapFont font = FontManager.getFont();

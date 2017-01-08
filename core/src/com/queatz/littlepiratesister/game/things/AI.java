@@ -19,17 +19,75 @@ public class AI extends Thing {
 
     private float nextAssessment = 3;
     public float sentimentMultiplier = 0;
+    private float idleTime = 0;
 
     @Override
     public void update(Update update) {
-        // Check money
-
         nextAssessment -= update.delta;
+        idleTime += update.delta;
 
         if(nextAssessment <= 0) {
-            nextAssessment += 3f;
+            nextAssessment += .3f;
             assess(update.world);
+        } else if (idleTime > 10) {
+            idleTime = 0;
+
+            if (sentimentMultiplier < 0) {
+                randomMovements(update.world);
+            }
         }
+    }
+
+    private void randomMovements(World world) {
+        Existential ship = randomShip(world, sentimentMultiplier);
+        Existential encampment = randomEncampment(world, sentimentMultiplier);
+
+        if (ship == null || encampment == null) {
+            return;
+        }
+
+        moveShipTo((Ship) ship.thing, encampment.position);
+    }
+
+    private Existential randomShip(World world, float sentiment) {
+        List<Existential> options = new ArrayList<>();
+
+        for (Existential existential : world.things.values()) {
+            Class clazz = existential.thing.getClass();
+
+            if (Ship.class.isAssignableFrom(clazz)) {
+                if (Math.signum(existential.sentiment.value) == Math.signum(sentiment)) {
+                    options.add(existential);
+                }
+            }
+        }
+
+        if (options.isEmpty()) {
+            return null;
+        }
+
+        return options.get(new Random().nextInt(options.size()));
+    }
+
+    private Existential randomEncampment(World world, float sentiment) {
+        List<Existential> options = new ArrayList<>();
+
+        for (Existential existential : world.things.values()) {
+            Class clazz = existential.thing.getClass();
+
+            if (Encampment.class.isAssignableFrom(clazz)) {
+                Encampment encampment = (Encampment) existential.thing;
+                if (Math.signum(encampment.existential.sentiment.value) == Math.signum(sentiment)) {
+                    options.add(existential);
+                }
+            }
+        }
+
+        if (options.isEmpty()) {
+            return null;
+        }
+
+        return options.get(new Random().nextInt(options.size()));
     }
 
     private void assess(World world) {
@@ -37,44 +95,49 @@ public class AI extends Thing {
             return;
         }
 
-        if (this.existential.resources.money < 50) {
+        Existential pick = randomEncampment(world, -sentimentMultiplier);
+
+        if (pick == null) {
             return;
         }
 
-        List<Existential> options = new ArrayList<>();
-        List<Existential> sendFromOptions = new ArrayList<>();
+        if (this.existential.resources.money < 50) {
+            Existential ship = randomShip(world, sentimentMultiplier);
 
-        for (Existential existential : world.things.values()) {
-            Class clazz = existential.thing.getClass();
 
-            if (Encampment.class.isAssignableFrom(clazz)) {
-                Encampment encampment = (Encampment) existential.thing;
-                if (Math.signum(encampment.existential.sentiment.value) != Math.signum(sentimentMultiplier)) {
-                    options.add(existential);
-                } else {
-                    sendFromOptions.add(existential);
-                }
+            if (ship != null) {
+                moveShipTo((Ship) ship.thing, pick.position);
             }
+
+            return;
         }
 
-        if (!options.isEmpty() && !sendFromOptions.isEmpty()) {
-            this.existential.resources.money -= 50;
+        Existential pickSendFrom = randomEncampment(world, sentimentMultiplier);
 
-            Existential pick = options.get(new Random().nextInt(options.size()));
-            Existential pickSendFrom = sendFromOptions.get(new Random().nextInt(sendFromOptions.size()));
-
-            Ship ship = new Ship();
-            Sentiment sentiment = new Sentiment();
-            sentiment.capacity = Math.random() > .75 ? Math.abs(sentimentMultiplier * 2) : Math.abs(sentimentMultiplier);
-            sentiment.value = sentimentMultiplier;
-            sentiment.power = 1;
-            sentiment.defense = Math.random() > .75 ? 4 : 1;
-            ship.setTarget(new Vector3((float) (Math.random() * .5) * 30, (float) (Math.random() * .5) * 30, 0).add(pick.position));
-            world.add(new Existential()
-                    .thing(ship)
-                    .sentiment(sentiment)
-                    .position(pickSendFrom.position));
+        if (pickSendFrom == null) {
+            return;
         }
+
+        this.existential.resources.money -= 50;
+
+        idleTime = 0;
+
+        Ship ship = new Ship();
+        Sentiment sentiment = new Sentiment();
+        sentiment.capacity = Math.random() > .75 ? Math.abs(sentimentMultiplier * 2) : Math.abs(sentimentMultiplier);
+        sentiment.value = sentimentMultiplier;
+        sentiment.power = 1;
+        sentiment.defense = Math.random() > .75 ? 4 : 1;
+        Existential e = new Existential()
+                .thing(ship)
+                .sentiment(sentiment)
+                .position(pickSendFrom.position);
+        world.add(e);
+        moveShipTo(ship, pick.position);
+    }
+
+    private void moveShipTo(Ship ship, Vector3 position) {
+        ship.setTarget(new Vector3((float) (Math.random() * .5) * 30, (float) (Math.random() * .5) * 30, 0).add(position));
     }
 
     @Override

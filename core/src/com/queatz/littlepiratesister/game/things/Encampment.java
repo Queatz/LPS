@@ -16,9 +16,9 @@ public class Encampment extends Thing {
     @Override
     public void update(Update update) {
         if (this.existential.sentiment.value < 0) {
-            update.game.getPlayer2AI().resources.money += Math.abs(this.existential.sentiment.value) * update.delta / 5; // 2X more resources...
+            update.game.getPlayer2AI().resources.money += Math.abs(this.existential.sentiment.value) * update.delta / 100;
         } else if (this.existential.sentiment.value > 0) {
-            update.game.getPlayerAI().resources.money += this.existential.sentiment.value * update.delta / 10;
+            update.game.getPlayerAI().resources.money += this.existential.sentiment.value * update.delta / 100;
         }
     }
 

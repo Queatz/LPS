@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by jacob on 1/7/17.
  */
 
-public class Name extends Element {
+public class SplashLogo extends Element {
 
     @Override
     public void render() {

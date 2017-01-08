@@ -15,7 +15,7 @@ import com.queatz.littlepiratesister.game.engine.Update;
 
 public class Ship extends Thing {
     private Vector3 target;
-    private float shipSpeed = 16;
+    private float shipSpeed = (float) Math.random() * 5f + 16f;
     private float life = 30;
 
     public void setTarget(Vector3 target) {
@@ -25,12 +25,12 @@ public class Ship extends Thing {
     @Override
     public void update(Update update) {
 
-        life -= update.delta;
-
-        if (life <= 0) {
-            update.world.delete(this);
-            return;
-        }
+//        life -= update.delta;
+//
+//        if (life <= 0) {
+//            update.world.delete(this);
+//            return;
+//        }
 
         float scl = shipSpeed * (float) update.delta;
 
@@ -58,15 +58,15 @@ public class Ship extends Thing {
         Decal sprite = Decal.newDecal(new TextureRegion(image), true);
         sprite.setRotationX(45);
 
-        float s;
+        float s = 1;
 
-        if (life > 29) {
-            s = 30 - life;
-        } else if (life < 1) {
-            s = life;
-        } else {
-            s = 1;
-        }
+//        if (life > 29) {
+//            s = 30 - life;
+//        } else if (life < 1) {
+//            s = life;
+//        } else {
+//            s = 1;
+//        }
 
         sprite.setScale((existential.sentiment.capacity > 10 ? .2f : .125f) * s);
         return sprite;

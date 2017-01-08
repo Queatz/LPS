@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.queatz.littlepiratesister.game.UIManager;
 import com.queatz.littlepiratesister.game.engine.Scene;
-import com.queatz.littlepiratesister.game.ui.Background;
-import com.queatz.littlepiratesister.game.ui.Button;
-import com.queatz.littlepiratesister.game.ui.Name;
+import com.queatz.littlepiratesister.game.engine.UIInput;
+import com.queatz.littlepiratesister.game.ui.ScrollingWaterBackground;
+import com.queatz.littlepiratesister.game.ui.ContinueButton;
+import com.queatz.littlepiratesister.game.ui.SplashLogo;
 
 /**
  * Created by jacob on 12/30/16.
@@ -19,11 +20,11 @@ public class MainScene extends Scene {
     @Override
     public void init() {
         uiManager = new UIManager();
-        Gdx.input.setInputProcessor(uiManager.getInputProcessor());
+        Gdx.input.setInputProcessor(new UIInput(uiManager));
 
-        uiManager.add(new Background("water.png"));
-        uiManager.add(new Name());
-        uiManager.add(new Button());
+        uiManager.add(new ScrollingWaterBackground("water.png"));
+        uiManager.add(new SplashLogo());
+        uiManager.add(new ContinueButton());
     }
 
     @Override

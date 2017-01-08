@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.engine.UIInput;
 import com.queatz.littlepiratesister.game.scenes.GameScene;
 import com.queatz.littlepiratesister.game.ui.Element;
@@ -18,20 +19,14 @@ import java.util.List;
  */
 
 public class UIManager {
-    private InputProcessor inputProcessor;
     public OrthographicCamera camera;
     public SpriteBatch spriteBatch;
 
     private List<Element> elementList = new ArrayList<>();
 
     public UIManager() {
-        inputProcessor = new UIInput(this);
         camera = new OrthographicCamera();
         spriteBatch = new SpriteBatch();
-    }
-
-    public InputProcessor getInputProcessor() {
-        return inputProcessor;
     }
 
     public void update() {
@@ -59,9 +54,22 @@ public class UIManager {
         spriteBatch.setProjectionMatrix(camera.combined);
     }
 
-    public void tap(Vector2 vector2) {
-        // find element and tap that...
-        SceneManager.set(new GameScene());
+    public boolean tap(Vector2 tap) {
+        Vector3 tap3 = camera.unproject(new Vector3(tap.x, tap.y, 0f));
+        tap.x = tap3.x;
+        tap.y = tap3.y;
+
+        for (Element element : elementList) {
+            if (!element.bounds().contains(tap)) {
+                continue;
+            }
+
+            if (element.tap()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void add(Element element) {
