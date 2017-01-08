@@ -1,12 +1,9 @@
 package com.queatz.littlepiratesister.game;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.queatz.littlepiratesister.game.engine.UIInput;
-import com.queatz.littlepiratesister.game.scenes.GameScene;
 import com.queatz.littlepiratesister.game.ui.Element;
 
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import java.util.List;
 public class UIManager {
     public OrthographicCamera camera;
     public SpriteBatch spriteBatch;
+    private float horizontalMaxView = 360;
 
     private List<Element> elementList = new ArrayList<>();
 
@@ -44,12 +42,12 @@ public class UIManager {
     }
 
     public void dispose() {
-        spriteBatch.dispose();
     }
 
     public void resize(Vector2 dimensions) {
         camera.viewportWidth = dimensions.x;
         camera.viewportHeight = dimensions.y;
+        camera.zoom = horizontalMaxView / camera.viewportWidth;
         camera.update();
         spriteBatch.setProjectionMatrix(camera.combined);
     }

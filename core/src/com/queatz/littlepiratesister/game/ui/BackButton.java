@@ -14,17 +14,16 @@ import com.queatz.littlepiratesister.game.scenes.MainScene;
 
 public class BackButton extends Element {
     private Texture backButton = ResourceManager.img("back.png");
+    private float scale = .33f;
 
     @Override
     public void render() {
-        float s = .5f;
-
         Vector3 position = new Vector3(
-                uiManager.camera.viewportWidth / 2 - backButton.getWidth() * s,
-                -uiManager.camera.viewportHeight / 2
+                uiManager.camera.viewportWidth * uiManager.camera.zoom / 2 - backButton.getWidth() * scale,
+                -uiManager.camera.viewportHeight * uiManager.camera.zoom / 2
                 , 0);
 
-        uiManager.spriteBatch.draw(backButton, position.x, position.y, backButton.getWidth() * s, backButton.getHeight() * s);
+        uiManager.spriteBatch.draw(backButton, position.x, position.y, backButton.getWidth() * scale, backButton.getHeight() * scale);
     }
 
     @Override
@@ -35,10 +34,9 @@ public class BackButton extends Element {
 
     @Override
     public Rectangle bounds() {
-        float s = .5f;
         Vector2 position = new Vector2(
-                uiManager.camera.viewportWidth / 2 - backButton.getWidth() * s,
-                -uiManager.camera.viewportHeight / 2);
-        return new Rectangle(position.x, position.y, backButton.getWidth() * s, backButton.getHeight() * s);
+                uiManager.camera.viewportWidth * uiManager.camera.zoom / 2 - backButton.getWidth() * scale,
+                -uiManager.camera.viewportHeight * uiManager.camera.zoom / 2);
+        return new Rectangle(position.x, position.y, backButton.getWidth() * scale, backButton.getHeight() * scale);
     }
 }

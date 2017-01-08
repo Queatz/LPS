@@ -45,27 +45,31 @@ public class ShaderManager {
             + "uniform mat4 u_projTrans;\n" //
             + "varying vec4 v_color;\n" //
             + "varying vec2 v_texCoords;\n" //
+            + "varying vec4 v_position;\n" //
             + "\n" //
             + "void main()\n" //
             + "{\n" //
             + "    v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
             + "    v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-            + "    gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "    v_position = " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "    gl_Position = u_projTrans * v_position;\n" //
             + "}\n";
     private static String waterFragmentShader = "#ifdef GL_ES\n" //
             + "precision mediump float;\n" //
             + "#endif\n" //
             + "varying vec4 v_color;\n" //
             + "varying vec2 v_texCoords;\n" //
+            + "varying vec4 v_position;\n" //
             + "uniform sampler2D u_texture;\n" //
             + "uniform mat4 u_projTrans;\n" //
             + "uniform float u_time;\n" //
             + "void main()\n"//
             + "{\n"
-            + "        vec2 uv = v_texCoords.xy;"
+            + "        vec2 uv = v_position.xy / 1532.239;"
             + "        vec2 o = vec2(0.05 * cos(u_time + 100.0 * uv.y) + cos(uv.y * 6. + u_time * .26) * .23," +
             "              0.05 * sin(u_time + 25.0 * uv.y + uv.x * 12.2) + cos(uv.y * 12. + u_time * .6) * .3);\n" +
-            "        vec4 color = texture2D(u_texture, fract(uv + o + texture2D(u_texture, fract(uv * 7.34 + u_time)).yx * .0624));\n" +
+            "        vec4 m = texture2D(u_texture, fract(uv * 7.34 + u_time + (1.4232 * (distance(cos(u_time + uv * .343), sin(u_time + uv * .3434))))));" +
+            "        vec4 color = texture2D(u_texture, fract(uv + o + m.gr * .1624));\n" +
             "        gl_FragColor = color * v_color;"
             + "}";
 
@@ -75,7 +79,6 @@ public class ShaderManager {
         }
 
         shader = new ShaderProgram(vertexShader, fragmentShader);
-
         if (!shader.isCompiled()) throw new IllegalArgumentException("couldn't compile shader: " + shader.getLog());
 
         return shader;
@@ -106,6 +109,6 @@ public class ShaderManager {
     }
 
     public static void shaderBegin(ShaderProgram shader) {
-        shader.setUniformf("u_time", (float) (new Date().getTime() / 100000d % 10000d));
+        shader.setUniformf("u_time", (float) Math.sin(new Date().getTime() / 25000d % (Math.PI * 2)));
     }
 }

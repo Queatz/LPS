@@ -23,8 +23,8 @@ public class ContinueButton extends Element {
 
         float y = (float) Math.sin((new Date().getTime() / 500d) % (Math.PI * 2)) * 1.5f;
 
-        Matrix4 matrix = uiManager.spriteBatch.getTransformMatrix();
-        uiManager.spriteBatch.setTransformMatrix(new Matrix4().setToTranslationAndScaling(new Vector3(-y, y, 0), new Vector3(1.5f, 1.5f, 1.5f)));
+        Matrix4 matrix = new Matrix4(uiManager.spriteBatch.getTransformMatrix());
+        uiManager.spriteBatch.setTransformMatrix(new Matrix4().setToTranslationAndScaling(new Vector3(-y, y, 0), new Vector3(.75f, .75f, 1f)));
 
         font.setColor(0, 0, 0, .25f);
         font.draw(uiManager.spriteBatch, text, -glyphLayout.width / 2 + 5, glyphLayout.height / 2 - 5);

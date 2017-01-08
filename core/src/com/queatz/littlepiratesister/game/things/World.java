@@ -3,6 +3,7 @@ package com.queatz.littlepiratesister.game.things;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -15,6 +16,7 @@ import com.queatz.littlepiratesister.game.engine.Sentiment;
 import com.queatz.littlepiratesister.game.engine.Update;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
@@ -67,6 +69,8 @@ public class World extends Thing {
                 camera.use().add(decal);
             }
         }
+
+        drawClouds(camera);
 
         return null;
     }
@@ -141,8 +145,7 @@ public class World extends Thing {
         float offs = 0;//(float) (new Date().getTime() / 33000d % 1d);
 
         image = ResourceManager.img("water_crests.png");
-//        int restore[] = {draw.getBlendSrcFunc(), draw.getBlendDstFunc()};
-//        draw.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        image.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         draw.setShader(ShaderManager.getWaterShader());
         ShaderManager.shaderBegin(ShaderManager.getWaterShader());
         draw.setColor(1, 1, 1, .667f);
@@ -161,8 +164,31 @@ public class World extends Thing {
             }
         }
         draw.setColor(Color.WHITE);
-//        draw.setBlendFunction(restore[0], restore[1]);
         draw.setShader(null);
+    }
+
+    public void drawClouds(Camera camera) {
+        float t = (float) (((double) new Date().getTime() / 82000d) % 1d);
+        float aspect = camera.getViewport().y * 2 / camera.getViewport().x;
+        float z = camera.getZoom();
+        float w = camera.getViewport().x * z;
+        float c = .02f;
+
+        Texture cloudImage = ResourceManager.img("cloud_shadows.png");
+        cloudImage.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        TextureRegion cloudRegion = new TextureRegion(cloudImage,
+                0f + camera.getPosition().x / w * c + t / 10,
+                0f - t - camera.getPosition().y / w * c,
+                c + camera.getPosition().x / w * c + t / 10,
+                c * aspect - t - camera.getPosition().y / w * c);
+
+        camera.sprite().setColor(new Color(1, 1, 1, .4f));
+        camera.sprite().draw(cloudRegion,
+                -camera.getViewport().x * z / 2 + camera.getPosition().x,
+                -camera.getViewport().y * z + camera.getPosition().y,
+                camera.getViewport().x * z,
+                camera.getViewport().y * z * 2);
+        camera.sprite().setColor(Color.WHITE);
     }
 
     public Vector3 getPosition(Thing thing) {

@@ -20,7 +20,7 @@ public class Camera {
     private DecalBatch decalBatch = new DecalBatch(new SimpleGroupStrategy(cam));
     private Vector3 position = new Vector3();
 
-    private float horizontalMaxView = 480;
+    private float horizontalMaxView = 360;
     private float zoom;
     private Vector3 ref;
 
