@@ -12,6 +12,7 @@ import java.util.Date;
 public class ShaderManager {
     private static ShaderProgram shader;
     private static ShaderProgram waterShader;
+    private static ShaderProgram swirlShader;
 
     private static String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
             + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
@@ -54,6 +55,7 @@ public class ShaderManager {
             + "    v_position = " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
             + "    gl_Position = u_projTrans * v_position;\n" //
             + "}\n";
+
     private static String waterFragmentShader = "#ifdef GL_ES\n" //
             + "precision mediump float;\n" //
             + "#endif\n" //
@@ -71,6 +73,23 @@ public class ShaderManager {
             "        vec4 m = texture2D(u_texture, fract(uv * 7.34 + u_time + (1.4232 * (distance(cos(u_time + uv * .343), sin(u_time + uv * .3434))))));" +
             "        vec4 color = texture2D(u_texture, fract(uv + o + m.gr * .1624));\n" +
             "        gl_FragColor = color * v_color;"
+            + "}";
+
+    private static String swirlFragmentShader = "#ifdef GL_ES\n" //
+            + "precision mediump float;\n" //
+            + "#endif\n" //
+            + "varying vec4 v_color;\n" //
+            + "varying vec2 v_texCoords;\n" //
+            + "varying vec4 v_position;\n" //
+            + "uniform sampler2D u_texture;\n" //
+            + "uniform mat4 u_projTrans;\n" //
+            + "uniform float u_factor;\n" //
+            + "void main()\n"//
+            + "{\n"
+            + "    float factor = "
+            + "        (distance(vec2(.5, .5), v_texCoords * vec2(1. - u_factor) + vec2(u_factor)) * sqrt(2.) * u_factor + u_factor)"
+            + "        ;"
+            + "    gl_FragColor = vec4(texture2D(u_texture, v_texCoords).rgb * .25, factor);"
             + "}";
 
     public static ShaderProgram getShader() {
@@ -106,9 +125,29 @@ public class ShaderManager {
             shader.dispose();
             shader = null;
         }
+
+        if (swirlShader != null) {
+            swirlShader.dispose();
+            swirlShader = null;
+        }
     }
 
     public static void shaderBegin(ShaderProgram shader) {
         shader.setUniformf("u_time", (float) Math.sin(new Date().getTime() / 25000d % (Math.PI * 2)));
+    }
+
+    public static void shaderFactor(ShaderProgram shader, float factor) {
+        shader.setUniformf("u_factor", factor);
+    }
+
+    public static ShaderProgram getSwirlShader() {
+        if (swirlShader != null) {
+            return swirlShader;
+        }
+
+        swirlShader = new ShaderProgram(waterVertexShader, swirlFragmentShader);
+
+        if (!swirlShader.isCompiled()) throw new IllegalArgumentException("couldn't compile shader: " + swirlShader.getLog());
+        return swirlShader;
     }
 }

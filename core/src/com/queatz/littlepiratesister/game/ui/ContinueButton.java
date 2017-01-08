@@ -17,7 +17,7 @@ public class ContinueButton extends Element {
     @Override
     public void render() {
         BitmapFont font = FontManager.getFont();
-        String text = "Continue";
+        String text = false ? "Continue" : "Begin Story";
         GlyphLayout glyphLayout = new GlyphLayout();
         glyphLayout.setText(font, text);
 

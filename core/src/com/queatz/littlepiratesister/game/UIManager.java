@@ -19,6 +19,7 @@ public class UIManager {
     public OrthographicCamera camera;
     public SpriteBatch spriteBatch;
     private float horizontalMaxView = 360;
+    private Element startElement;
 
     private List<Element> elementList = new ArrayList<>();
 
@@ -52,7 +53,22 @@ public class UIManager {
         spriteBatch.setProjectionMatrix(camera.combined);
     }
 
+    public boolean startTap(Vector2 tap) {
+        startElement = elementAtPosition(tap);
+        return startElement != null;
+    }
+
     public boolean tap(Vector2 tap) {
+        Element element = elementAtPosition(tap);
+
+        if (element != null && element == startElement) {
+            element.tap();
+        }
+
+        return false;
+    }
+
+    private Element elementAtPosition(Vector2 tap) {
         Vector3 tap3 = camera.unproject(new Vector3(tap.x, tap.y, 0f));
         tap.x = tap3.x;
         tap.y = tap3.y;
@@ -62,12 +78,10 @@ public class UIManager {
                 continue;
             }
 
-            if (element.tap()) {
-                return true;
-            }
+            return element;
         }
 
-        return false;
+        return null;
     }
 
     public void add(Element element) {

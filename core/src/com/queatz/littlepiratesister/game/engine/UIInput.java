@@ -33,7 +33,7 @@ public class UIInput implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        return uiManager.startTap(new Vector2(screenX, screenY));
     }
 
     @Override

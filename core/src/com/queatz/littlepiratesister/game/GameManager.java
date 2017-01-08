@@ -267,8 +267,4 @@ public class GameManager {
 
         world.add(new Existential().thing(new Target()).position(to.position));
     }
-
-    public boolean click(Vector3 position) {
-        return uiManager.tap(new Vector2(position.x, position.y));
-    }
 }

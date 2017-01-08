@@ -33,6 +33,10 @@ public class Input implements InputProcessor {
             return false;
         }
 
+        if (gameManager.uiManager.startTap(new Vector2(screenX, screenY))) {
+            return true;
+        }
+
         start.x = screenX;
         start.y = screenY;
         dragging = new Vector2(start);
@@ -47,7 +51,7 @@ public class Input implements InputProcessor {
             return false;
         }
 
-        if (gameManager.click(new Vector3(screenX, screenY, 0))) {
+        if (gameManager.uiManager.tap(new Vector2(screenX, screenY))) {
             return true;
         }
 
