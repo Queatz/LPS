@@ -8,6 +8,7 @@ import com.queatz.littlepiratesister.game.ResourceManager;
 import com.queatz.littlepiratesister.game.SceneManager;
 import com.queatz.littlepiratesister.game.ShaderManager;
 import com.queatz.littlepiratesister.game.scenes.GameScene;
+import com.queatz.littlepiratesister.game.scenes.OverworldScene;
 
 import java.util.Date;
 
@@ -18,9 +19,11 @@ import java.util.Date;
 public class ScrollingWaterBackground extends Element {
 
     private Texture image;
+    private String name;
 
     public ScrollingWaterBackground(String image) {
         this.image = ResourceManager.img(image);
+        name = image;
         this.image.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.image.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     }
@@ -35,7 +38,6 @@ public class ScrollingWaterBackground extends Element {
         float w = uiManager.camera.viewportWidth * uiManager.camera.zoom;
         float h = uiManager.camera.viewportHeight * uiManager.camera.zoom;
 
-        image = ResourceManager.img("water.png");
         image.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         uiManager.spriteBatch.setShader(ShaderManager.getWaterShader());
         ShaderManager.shaderBegin(ShaderManager.getWaterShader());
@@ -55,7 +57,12 @@ public class ScrollingWaterBackground extends Element {
 
     @Override
     public boolean tap() {
-        SceneManager.set(new GameScene());
+        if ("water_crests.png".equals(name)) {
+            SceneManager.set(new GameScene());
+        } else {
+            SceneManager.set(new OverworldScene());
+        }
+
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.ui.Element;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -73,7 +74,8 @@ public class UIManager {
         tap.x = tap3.x;
         tap.y = tap3.y;
 
-        for (Element element : elementList) {
+        for (int i = elementList.size() - 1; i >= 0; i--) {
+            Element element = elementList.get(i);
             if (!element.bounds().contains(tap)) {
                 continue;
             }

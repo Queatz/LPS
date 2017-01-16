@@ -40,13 +40,41 @@ public class AI extends Thing {
 
     private void randomMovements(World world) {
         Existential ship = randomShip(world, sentimentMultiplier);
+
+        if (ship == null) {
+            return;
+        }
+
         Existential encampment = randomEncampment(world, sentimentMultiplier);
 
-        if (ship == null || encampment == null) {
+        if (encampment == null) {
             return;
         }
 
         moveShipTo((Ship) ship.thing, encampment.position);
+    }
+
+    private Existential closestEncampment(World world, float sentimentMultiplier, Vector3 position) {
+        Existential closest = null;
+        float closestDistance = 0;
+
+        for (Existential existential : world.things.values()) {
+            Class clazz = existential.thing.getClass();
+
+            if (Encampment.class.isAssignableFrom(clazz)) {
+                Encampment encampment = (Encampment) existential.thing;
+                if (Math.signum(encampment.existential.sentiment.value) == Math.signum(sentimentMultiplier)) {
+                    float distance = position.dst(existential.position);
+
+                    if (closest == null || closestDistance > distance) {
+                        closest = existential;
+                        closestDistance = distance;
+                    }
+                }
+            }
+        }
+
+        return closest;
     }
 
     private Existential randomShip(World world, float sentiment) {
@@ -104,9 +132,13 @@ public class AI extends Thing {
         if (this.existential.resources.money < 50) {
             Existential ship = randomShip(world, sentimentMultiplier);
 
-
             if (ship != null) {
-                moveShipTo((Ship) ship.thing, pick.position);
+
+                pick = closestEncampment(world, -sentimentMultiplier, ship.position);
+
+                if (pick != null) {
+                    moveShipTo((Ship) ship.thing, pick.position);
+                }
             }
 
             return;

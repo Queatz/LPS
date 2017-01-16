@@ -2,6 +2,7 @@ package com.queatz.littlepiratesister.game.scenes;
 
 import com.badlogic.gdx.math.Vector2;
 import com.queatz.littlepiratesister.game.GameManager;
+import com.queatz.littlepiratesister.game.SceneManager;
 import com.queatz.littlepiratesister.game.UIManager;
 import com.queatz.littlepiratesister.game.engine.Scene;
 import com.queatz.littlepiratesister.game.ui.BackButton;
@@ -18,7 +19,12 @@ public class GameScene extends Scene {
     public void init() {
         gameManager = new GameManager();
         uiManager = new UIManager();
-        uiManager.add(new BackButton());
+        uiManager.add(new BackButton(new Runnable() {
+            @Override
+            public void run() {
+                SceneManager.set(new OverworldScene());
+            }
+        }));
         gameManager.uiManager = uiManager;
     }
 

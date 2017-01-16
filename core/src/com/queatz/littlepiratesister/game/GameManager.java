@@ -2,9 +2,7 @@ package com.queatz.littlepiratesister.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.engine.Camera;
@@ -15,6 +13,7 @@ import com.queatz.littlepiratesister.game.engine.Sentiment;
 import com.queatz.littlepiratesister.game.engine.Update;
 import com.queatz.littlepiratesister.game.things.AI;
 import com.queatz.littlepiratesister.game.things.Encampment;
+import com.queatz.littlepiratesister.game.things.Map;
 import com.queatz.littlepiratesister.game.things.Player;
 import com.queatz.littlepiratesister.game.things.Ship;
 import com.queatz.littlepiratesister.game.things.Target;
@@ -75,6 +74,9 @@ public class GameManager {
         playerSentiment.defense = 3f;
 
         world.add(new Existential().thing(player).sentiment(playerSentiment));
+
+        world.map(new Existential().thing(new Map()));
+
         for (int i = 0; i < 5; i++) {
             Sentiment sentiment = new Sentiment();
             sentiment.capacity = (float) (Math.random() * 120f);

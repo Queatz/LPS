@@ -30,9 +30,14 @@ public class World extends Thing {
     public HashMap<Integer, Existential> things = new HashMap<>();
     private Collection<Runnable> pendingItems = new Stack<>();
     private Color playerSentimentColor = new Color(15 / 255f, 255 / 255f, 127 / 255f, 1);
+    private Existential map;
 
     @Override
     public void update(Update update) {
+        if (map != null) {
+            map.thing.update(update);
+        }
+
         for (Existential existential : this.things.values()) {
             // update sentiment
             calculateSentiment(update, existential);
@@ -55,6 +60,10 @@ public class World extends Thing {
     public Decal render(Camera camera) {
         background(camera);
 
+        if (map != null) {
+            map.thing.render(camera);
+        }
+
         for (Existential existential : this.things.values()) {
             camera.setRef(existential.position);
 
@@ -65,7 +74,7 @@ public class World extends Thing {
             Decal decal = existential.thing.render(camera);
 
             if (decal != null) {
-                decal.setPosition(new Vector3(existential.position));
+                decal.getPosition().add(new Vector3(existential.position));
                 camera.use().add(decal);
             }
         }
@@ -141,30 +150,6 @@ public class World extends Thing {
                 draw.draw(image, (xo + x) * ts, (yo + y) * ts);
             }
         }
-
-        float offs = 0;//(float) (new Date().getTime() / 33000d % 1d);
-
-        image = ResourceManager.img("water_crests.png");
-        image.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-        draw.setShader(ShaderManager.getWaterShader());
-        ShaderManager.shaderBegin(ShaderManager.getWaterShader());
-        draw.setColor(1, 1, 1, .667f);
-        ts *= 5;
-
-
-        xs = Math.max(1, (int) Math.ceil(vp.x / 2 * s / ts));
-        ys = Math.max(1, (int) Math.ceil(vp.y / 2 * s / ts)) * 2; // because rotate 45
-
-        xo = (int) Math.floor(camera.getPosition().x / ts);
-        yo = (int) Math.floor(camera.getPosition().y / ts);
-
-        for (int x = -xs -1; x <= xs +1; x++) {
-            for (int y = -ys -1; y <= ys +1; y++) {
-                draw.draw(image, (xo + x - .25f) * ts, (yo + y + offs) * ts, ts, ts);
-            }
-        }
-        draw.setColor(Color.WHITE);
-        draw.setShader(null);
     }
 
     public void drawClouds(Camera camera) {
@@ -177,9 +162,9 @@ public class World extends Thing {
         Texture cloudImage = ResourceManager.img("cloud_shadows.png");
         cloudImage.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         TextureRegion cloudRegion = new TextureRegion(cloudImage,
-                0f + camera.getPosition().x / w * c + t / 10,
+                0f + camera.getPosition().x / w * c + t / 9,
                 0f - t - camera.getPosition().y / w * c,
-                c + camera.getPosition().x / w * c + t / 10,
+                c + camera.getPosition().x / w * c + t / 9,
                 c * aspect - t - camera.getPosition().y / w * c);
 
         camera.sprite().setColor(new Color(1, 1, 1, .4f));
@@ -227,4 +212,11 @@ public class World extends Thing {
         }
     }
 
+    public void map(Existential map) {
+        this.map = map;
+    }
+
+    public Existential map() {
+        return map;
+    }
 }

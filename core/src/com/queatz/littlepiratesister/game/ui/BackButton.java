@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.ResourceManager;
 import com.queatz.littlepiratesister.game.SceneManager;
 import com.queatz.littlepiratesister.game.scenes.MainScene;
+import com.queatz.littlepiratesister.game.scenes.OverworldScene;
 
 /**
  * Created by jacob on 1/7/17.
@@ -15,6 +16,11 @@ import com.queatz.littlepiratesister.game.scenes.MainScene;
 public class BackButton extends Element {
     private Texture backButton = ResourceManager.img("back.png");
     private float scale = .33f;
+    private Runnable onTap;
+
+    public BackButton(Runnable onTap) {
+        this.onTap = onTap;
+    }
 
     @Override
     public void render() {
@@ -28,7 +34,7 @@ public class BackButton extends Element {
 
     @Override
     public boolean tap() {
-        SceneManager.set(new MainScene());
+        onTap.run();
         return true;
     }
 
