@@ -20,9 +20,11 @@ public class ScrollingWaterBackground extends Element {
 
     private Texture image;
     private String name;
+    private Runnable click;
 
-    public ScrollingWaterBackground(String image) {
+    public ScrollingWaterBackground(String image, Runnable click) {
         this.image = ResourceManager.img(image);
+        this.click = click;
         name = image;
         this.image.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.image.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -57,13 +59,12 @@ public class ScrollingWaterBackground extends Element {
 
     @Override
     public boolean tap() {
-        if ("water_crests.png".equals(name)) {
-            SceneManager.set(new GameScene());
-        } else {
-            SceneManager.set(new OverworldScene());
+        if (click != null) {
+            click.run();
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override

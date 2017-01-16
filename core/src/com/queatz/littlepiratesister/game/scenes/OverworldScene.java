@@ -17,15 +17,41 @@ import com.queatz.littlepiratesister.game.ui.TownButton;
 public class OverworldScene extends Scene {
     private UIManager uiManager;
 
+    private static String[] townNames = {
+            "Thilelle",
+            "Maqruelle",
+            "Vliad",
+            "Reyenne",
+            "Tessa",
+            "Muycera",
+            "Stissen",
+            "Iations",
+            "Desselle",
+            "Mehrlitt",
+            "Coera",
+            "Lella",
+            "Yvumen",
+            "Vashter",
+            "Thailiad",
+            "Eessa",
+    };
+
     @Override
     public void init() {
         uiManager = new UIManager();
         Gdx.input.setInputProcessor(new UIInput(uiManager));
 
-        uiManager.add(new ScrollingWaterBackground("water_crests.png"));
+        uiManager.add(new ScrollingWaterBackground("water.png", null));
 
-        for (int i = 0; i < 15; i++) {
-            uiManager.add(new TownButton("Thilelle", new Vector2(-.75f + (i % 4) / 3f, -.65f + (i / 4) * .35f)));
+        for (int i = 0; i < 16; i++) {
+            int x = (i % 4);
+            int y = (i / 4);
+
+            uiManager.add(new TownButton(townNames[15 - i],
+                    new Vector2(
+                            -.75f + x / 4f * 2f,
+                            -.75f + y / 4f * 2f
+                    ).scl(.85f)));
         }
 
         uiManager.add(new BackButton(new Runnable() {

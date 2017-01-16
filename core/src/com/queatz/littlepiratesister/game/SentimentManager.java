@@ -33,4 +33,25 @@ public class SentimentManager {
 
         Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
     }
+
+    public static void drawSentiment(SpriteBatch draw, float sentiment, float x, float y, Color color) {
+        Texture image = ResourceManager.img("sentimental.png");
+        float s = (float) Math.sqrt(Math.abs(sentiment) * 1000f);
+
+        draw.setColor(color);
+
+        int restore[] = {draw.getBlendSrcFunc(), draw.getBlendDstFunc()};
+        draw.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+
+        if (sentiment < 0) {
+            Gdx.gl.glBlendEquation(GL20.GL_FUNC_REVERSE_SUBTRACT);
+        } else {
+            Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
+        }
+        draw.draw(image, x + (s / -2), y + (s / -2), s, s);
+        draw.setColor(Color.WHITE);
+        draw.setBlendFunction(restore[0], restore[1]);
+
+        Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
+    }
 }

@@ -2,6 +2,7 @@ package com.queatz.littlepiratesister.game.scenes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.queatz.littlepiratesister.game.SceneManager;
 import com.queatz.littlepiratesister.game.UIManager;
 import com.queatz.littlepiratesister.game.engine.Scene;
 import com.queatz.littlepiratesister.game.engine.UIInput;
@@ -22,7 +23,12 @@ public class MainScene extends Scene {
         uiManager = new UIManager();
         Gdx.input.setInputProcessor(new UIInput(uiManager));
 
-        uiManager.add(new ScrollingWaterBackground("water.png"));
+        uiManager.add(new ScrollingWaterBackground("water.png", new Runnable() {
+            @Override
+            public void run() {
+                SceneManager.set(new OverworldScene());
+            }
+        }));
         uiManager.add(new SplashLogo());
         uiManager.add(new ContinueButton());
     }
