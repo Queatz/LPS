@@ -33,6 +33,10 @@ public class Player extends Thing {
             }
         }
 
+        if (existential.sentiment.value < 0) {
+            update.game.lose();
+        }
+
         oldPosition.set(existential.position);
     }
 

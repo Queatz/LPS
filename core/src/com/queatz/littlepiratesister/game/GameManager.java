@@ -2,7 +2,9 @@ package com.queatz.littlepiratesister.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.engine.Camera;
@@ -11,6 +13,7 @@ import com.queatz.littlepiratesister.game.engine.Input;
 import com.queatz.littlepiratesister.game.engine.Resources;
 import com.queatz.littlepiratesister.game.engine.Sentiment;
 import com.queatz.littlepiratesister.game.engine.Update;
+import com.queatz.littlepiratesister.game.scenes.OverworldScene;
 import com.queatz.littlepiratesister.game.things.AI;
 import com.queatz.littlepiratesister.game.things.Encampment;
 import com.queatz.littlepiratesister.game.things.Map;
@@ -41,6 +44,7 @@ public class GameManager {
     private Existential playerAI;
     private Existential player2AI;
     public UIManager uiManager;
+    private Date lost;
 
     public GameManager() {
         world = new World();
@@ -54,6 +58,7 @@ public class GameManager {
     }
 
     private void setupWorld() {
+        lost = null;
         player = new Player();
 
         AI ai = new AI();
@@ -132,6 +137,10 @@ public class GameManager {
 
         // Center on player
         camera.setPosition(world.getPosition(player));
+
+        if (lost != null && new Date().after(new Date(lost.getTime() + 5000))) {
+            SceneManager.set(new OverworldScene());
+        }
     }
 
     public void render() {
@@ -162,6 +171,22 @@ public class GameManager {
         );
 
         FontManager.write(camera, text, position, true, s);
+
+        if (lost != null) {
+            Texture loseImage = ResourceManager.img("loser.png");
+
+            Matrix4 matrix4 = new Matrix4(camera.sprite().getTransformMatrix());
+            s = Math.max(0, .25f - (new Date().getTime() - lost.getTime()) / 1000f) * 6;
+            camera.sprite().setTransformMatrix(new Matrix4().setToTranslationAndScaling(camera.getPosition(), new Vector3(1.6f + s, 1.6f + s, 1.6f + s)));
+
+            camera.sprite().begin();
+            camera.sprite().draw(loseImage,
+                    -loseImage.getWidth() / 2,
+                    -loseImage.getHeight() / 2);
+            camera.sprite().end();
+
+            camera.sprite().setTransformMatrix(matrix4);
+        }
 
         camera.setPersp(true);
     }
@@ -203,7 +228,6 @@ public class GameManager {
         if (getPlayerAI().resources.money < 50) {
             return;
         }
-
 
         Existential closestPositive = null;
         float closestPositiveDistance = -1;
@@ -268,5 +292,11 @@ public class GameManager {
                 .position(from.position));
 
         world.add(new Existential().thing(new Target()).position(to.position));
+    }
+
+    public void lose() {
+        if (lost == null) {
+            lost = new Date();
+        }
     }
 }
