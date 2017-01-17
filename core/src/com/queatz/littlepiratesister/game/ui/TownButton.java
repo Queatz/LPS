@@ -68,6 +68,7 @@ public class TownButton extends Element {
     @Override
     public boolean tap() {
         SceneManager.set(new GameScene());
+        ResourceManager.snd("tap.ogg").play();
         return true;
     }
 

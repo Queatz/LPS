@@ -12,4 +12,5 @@ public class Scene {
     public void render() { }
     public void dispose() { }
     public void resize(Vector2 dimensions) { }
+    public void factor(float factor) { };
 }

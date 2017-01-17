@@ -2,6 +2,7 @@ package com.queatz.littlepiratesister.game.things;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector3;
+import com.queatz.littlepiratesister.game.GameManager;
 import com.queatz.littlepiratesister.game.engine.Camera;
 import com.queatz.littlepiratesister.game.engine.Existential;
 import com.queatz.littlepiratesister.game.engine.Sentiment;
@@ -23,13 +24,13 @@ public class AI extends Thing {
 
     @Override
     public void update(Update update) {
-        nextAssessment -= update.delta;
         idleTime += update.delta;
+        nextAssessment -= update.delta;
 
         if(nextAssessment <= 0) {
-            nextAssessment += .3f;
-            assess(update.world);
-        } else if (idleTime > 10) {
+            nextAssessment += 1f;
+            assess(update.world, update.game);
+        } else if (idleTime > 5) {
             idleTime = 0;
 
             if (sentimentMultiplier < 0) {
@@ -118,7 +119,7 @@ public class AI extends Thing {
         return options.get(new Random().nextInt(options.size()));
     }
 
-    private void assess(World world) {
+    private void assess(World world, GameManager game) {
         if (sentimentMultiplier > 0) {
             return;
         }
@@ -126,6 +127,7 @@ public class AI extends Thing {
         Existential pick = randomEncampment(world, -sentimentMultiplier);
 
         if (pick == null) {
+            chasePlayer(world, game.getPlayer());
             return;
         }
 
@@ -166,6 +168,28 @@ public class AI extends Thing {
                 .position(pickSendFrom.position);
         world.add(e);
         moveShipTo(ship, pick.position);
+    }
+
+    private void chasePlayer(World world, Thing player) {
+        Existential ship = randomShip(world, sentimentMultiplier);
+
+        Existential targetShip;
+
+        if (Math.signum(player.existential.sentiment.value) != Math.signum(sentimentMultiplier)) {
+            targetShip = player.existential;
+        } else {
+            targetShip = randomShip(world, -sentimentMultiplier);
+        }
+
+        if (ship == null || targetShip == null) {
+            return;
+        }
+
+        moveShipTo(ship, targetShip);
+    }
+
+    private void moveShipTo(Existential ship, Existential targetShip) {
+        ((Ship) ship.thing).setTarget(targetShip);
     }
 
     private void moveShipTo(Ship ship, Vector3 position) {

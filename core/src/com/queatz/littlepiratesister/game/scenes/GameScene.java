@@ -1,7 +1,9 @@
 package com.queatz.littlepiratesister.game.scenes;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector2;
 import com.queatz.littlepiratesister.game.GameManager;
+import com.queatz.littlepiratesister.game.ResourceManager;
 import com.queatz.littlepiratesister.game.SceneManager;
 import com.queatz.littlepiratesister.game.UIManager;
 import com.queatz.littlepiratesister.game.engine.Scene;
@@ -14,6 +16,7 @@ import com.queatz.littlepiratesister.game.ui.BackButton;
 public class GameScene extends Scene {
     private UIManager uiManager;
     private GameManager gameManager;
+    private Music music;
 
     @Override
     public void init() {
@@ -26,6 +29,15 @@ public class GameScene extends Scene {
             }
         }));
         gameManager.uiManager = uiManager;
+
+        music = ResourceManager.mus("LPS_Battle.ogg");
+        music.setLooping(true);
+        music.play();
+    }
+
+    @Override
+    public void factor(float factor) {
+        music.setVolume(factor);
     }
 
     @Override
@@ -50,5 +62,6 @@ public class GameScene extends Scene {
     public void dispose() {
         gameManager.dispose();
         uiManager.dispose();
+        music.stop();
     }
 }

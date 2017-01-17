@@ -29,7 +29,7 @@ public class Map extends Thing {
         {1002,   1003,   0,   0,   1001,   1002,   1002,   1002},
     };
 
-    private static int tileSize = 64;
+    private static int tileSize = 256;
     private static float renderSize = 256;
     private static float mapWidth = 8;
     private static float mapHeight = 8;
@@ -43,7 +43,7 @@ public class Map extends Thing {
 
     @Override
     public Decal render(Camera camera) {
-        Texture image = ResourceManager.img("tiles.png");
+        Texture image = ResourceManager.img("land.png");
 
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {

@@ -1,5 +1,6 @@
 package com.queatz.littlepiratesister.game.things;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.queatz.littlepiratesister.game.ResourceManager;
 import com.queatz.littlepiratesister.game.engine.Camera;
+import com.queatz.littlepiratesister.game.engine.Existential;
 import com.queatz.littlepiratesister.game.engine.Update;
 
 import java.util.Date;
@@ -18,18 +20,47 @@ import java.util.Random;
 
 public class Ship extends Thing {
     private Vector3 target;
+    private Existential targetSubject;
     private Vector3 evadeTarget;
     private float evadeTime;
-    private float shipSpeed = (float) Math.random() * 5f + 16f;
+    private float shipSpeed = (float) Math.random() * 36f + 16f;
     private float life = 30;
     private float stuckTime;
+    private float previousSentiment;
+
+    private static Sound[] sounds = new Sound[] {
+            ResourceManager.snd("got_u.ogg"),
+            ResourceManager.snd("got_u2.ogg"),
+            ResourceManager.snd("got_u3.ogg")
+    };
+
+    private static Sound[] soundsUtoh = new Sound[] {
+            ResourceManager.snd("grunt_1.ogg"),
+            ResourceManager.snd("grunt_2.ogg"),
+            ResourceManager.snd("grunt_3.ogg")
+    };
 
     public void setTarget(Vector3 target) {
         this.target = target;
+        targetSubject = null;
+    }
+
+    public void setTarget(Existential target) {
+        targetSubject = target;
     }
 
     @Override
     public void update(Update update) {
+
+        if (previousSentiment != 0 && Math.signum(existential.sentiment.value) != Math.signum(previousSentiment)) {
+            if (existential.sentiment.value > 0) {
+                sounds[new Random().nextInt(3)].play();
+            } else {
+                soundsUtoh[new Random().nextInt(3)].play();
+            }
+        }
+
+        previousSentiment = existential.sentiment.value;
 
 //        life -= update.delta;
 //
@@ -45,6 +76,10 @@ public class Ship extends Thing {
         }
 
         Vector3 current = update.world.getPosition(this);
+
+        if (targetSubject != null) {
+            target.set(targetSubject.position);
+        }
 
         // Vector
         Vector2 pos = new Vector2(
@@ -64,7 +99,11 @@ public class Ship extends Thing {
                 evadeTime -= update.delta;
             }
         } else {
-            update.world.move(this, new Vector3(pos.nor().scl(scl), 0));
+            Vector3 move = new Vector3(pos.nor().scl(scl), 0);
+
+            if (current.dst(target) > 16) {
+                update.world.move(this, move);
+            }
         }
 
         Map map = ((Map) update.world.map().thing);

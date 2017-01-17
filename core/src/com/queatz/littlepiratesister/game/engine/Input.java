@@ -19,7 +19,7 @@ public class Input implements InputProcessor {
     private Vector2 dragging;
     private Date dragStart;
     private float sensitivity = 1;
-    private float maxSpeed = 100;
+    private float maxSpeed = 128;
     private float sensitivityForTap = 250;
 
     public Input(GameManager gameManager) {

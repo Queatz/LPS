@@ -35,6 +35,7 @@ public class BackButton extends Element {
     @Override
     public boolean tap() {
         onTap.run();
+        ResourceManager.snd("tap.ogg").play();
         return true;
     }
 

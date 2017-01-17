@@ -61,6 +61,7 @@ public class ScrollingWaterBackground extends Element {
     public boolean tap() {
         if (click != null) {
             click.run();
+            ResourceManager.snd("tap.ogg").play();
             return true;
         }
 

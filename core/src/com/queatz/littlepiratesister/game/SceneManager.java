@@ -47,6 +47,10 @@ public class SceneManager {
     }
 
     public static void update() {
+        if (transitionStart != null && getFactor() <= 1 && getFactor() >= 0) {
+            activeScene.factor(1 - getFactor());
+        }
+
         if (transitionTo != null) {
             if (transitionStart == null || (new Date().getTime() - transitionStart.getTime()) > transitionMs) {
                 set();
